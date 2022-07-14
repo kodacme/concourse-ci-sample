@@ -1,23 +1,24 @@
+# Concourse CI Sample
+This repository is an example of building a CI pipeline using Concourse CI for Concourse CI beginners.
+
 # Setup
 
 ```shell
-$ curl -O https://concourse-ci.org/docker-compose.yml
-$ docker-compose up -d
+~$ git clone git@github.com:kodacme/concourse-ci-sample.git
+
+~$ ./keys/generate
+
+~$ docker-compose up -d
 ```
 
-Install the fly CLI by downloading from `https://concourse-ci.org/`
+Install the fly CLI by downloading from [concourse ci](https://concourse-ci.org/).
+fly is a CLI dedicated to Concourse CI.  
+Concourse CI is operated using this fly command.
 
 ```shell
 $ chmod +x ~/Downloads/fly
 $ mv ~/Downloads/fly /usr/local/bin
 $ fly -v
-7.6.0
+7.8.1
 ```
 
-login
-```shell
-$ fly -t tutorial login -c http://localhost:8080 -u test -p test
-logging in to team 'main'
-
-target saved
-```
