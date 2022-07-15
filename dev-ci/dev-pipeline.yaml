@@ -1,0 +1,22 @@
+resources:
+  - name: repo
+    type: git
+    source:
+      uri: https://github.com/kodacme/flask-pytest-demo.git
+      branch: develop
+    icon: github
+  - name: repo-ci
+    type: git
+    source:
+      uri: https://github.com/kodacme/concourse-ci-sample.git
+      branch: dev
+    icon: github
+
+jobs:
+  - name: unit
+    plan:
+      - get: repo
+        trigger: true
+      - get: repo-ci
+      - task: unittest
+        file: repo-ci/dev-ci/task/unittest.yaml

@@ -22,3 +22,8 @@ $ fly -v
 7.8.1
 ```
 
+```shell
+~$ fly -t sample-ci login -c http://localhost:8080
+```
+
+

@@ -1,0 +1,16 @@
+platform: linux
+
+image_resource:
+  type: registry-image
+  source:
+    repository: python
+    tag: 3.9.2-alpine
+
+inputs:
+  - name: repo
+  - name: repo-ci
+
+run:
+  path: sh
+  args:
+    - repo-ci/dev-ci/task/unittest.sh
