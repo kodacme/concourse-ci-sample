@@ -9,6 +9,8 @@ image_resource:
 inputs:
   - name: repo
   - name: repo-ci
+outputs:
+  - name: report-result
 
 run:
   path: sh
