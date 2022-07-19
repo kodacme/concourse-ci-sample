@@ -22,3 +22,14 @@ $ fly -v
 7.8.1
 ```
 
+```shell
+~$ fly -t sample-ci login -c http://localhost:8080
+```
+
+```shell
+fly -t sample-ci set-pipeline -p my-pipeline -c dev-ci/dev-pipeline.yaml -l dev-ci/dev-pipeline-vars.yaml
+```
+
+```shell
+fly -t sample-ci unpause-pipeline -p my-pipeline
+```

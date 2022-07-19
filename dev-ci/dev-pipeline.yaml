@@ -1,0 +1,36 @@
+resources:
+  - name: repo
+    type: git
+    source:
+      uri: https://github.com/kodacme/flask-pytest-demo.git
+      branch: develop
+    icon: github
+  - name: repo-ci
+    type: git
+    source:
+      uri: https://github.com/kodacme/concourse-ci-sample.git
+      branch: dev
+    icon: github
+  - name: repo-test-report
+    type: git
+    source:
+      uri: https://gist.github.com/46ecfc7ea4781b69657fefe5aed6ef2d.git
+      branch: main
+      username: ((github.username))
+      password: ((github.password))
+    icon: github
+
+jobs:
+  - name: unit
+    plan:
+      - get: repo
+        trigger: true
+      - get: repo-ci
+      - get: repo-test-report
+      - task: unittest
+        file: repo-ci/dev-ci/task/unittest.yaml
+      - task: report-upload
+        file: repo-ci/dev-ci/task/report-upload.yaml
+      - put: repo-test-report
+        params:
+          repository: repo-test-report-update

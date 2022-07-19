@@ -31,7 +31,7 @@ services:
       CONCOURSE_POSTGRES_PASSWORD: devpass
       CONCOURSE_POSTGRES_DATABASE: concourse
       CONCOURSE_ADD_LOCAL_USER: test:test,guest:guest
-      CONCOURSE_MAIN_TEAM_LOCAL_USER: test
+      CONCOURSE_MAIN_TEAM_LOCAL_USER: test,guest
       CONCOURSE_CLUSTER_NAME: dev
     logging:
       driver: "json-file"
