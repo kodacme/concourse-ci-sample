@@ -10,7 +10,8 @@ inputs:
   - name: repo
   - name: repo-ci
 outputs:
-  - name: report-result
+  # - name: report-result
+  - name: sonarqube-analysis-input
 
 run:
   path: sh

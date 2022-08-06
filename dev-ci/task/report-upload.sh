@@ -3,7 +3,7 @@
 apk add git
 git clone repo-test-report repo-test-report-update
 
-cp report-result/report.xml repo-test-report-update/report.xml
+cp sonarqube-analysis-input/test-results/report.xml repo-test-report-update/report.xml
 cd repo-test-report-update
 
 git config --global user.email "nobody@concourse-ci.org"
