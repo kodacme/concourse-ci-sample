@@ -142,3 +142,6 @@ jobs:
           params:
             alert_type: failed
 
+# There is no sample job beyond this,
+# but we can edit the Kubernetes manifest file,
+# run a deploy job and more.
