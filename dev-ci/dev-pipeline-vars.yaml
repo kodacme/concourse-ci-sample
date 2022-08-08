@@ -1,3 +1,13 @@
 github:
   username: dummy
   password: dummy
+
+sonarqube:
+  host-url: dummy
+  auth-token: dummy
+
+registry:
+  username: dummy
+  password: dummy
+
+slack-webhook: dummy

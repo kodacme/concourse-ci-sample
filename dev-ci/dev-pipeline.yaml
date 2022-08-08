@@ -1,3 +1,17 @@
+resource_types:
+
+- name: sonar-runner
+  type: docker-image
+  source:
+    repository: cathive/concourse-sonarqube-resource
+    tag: v0.14.0
+
+- name: slack-alert
+  type: docker-image
+  source:
+    repository: arbourd/concourse-slack-alert-resource
+    tag: latest
+
 resources:
   - name: repo
     type: git
@@ -19,9 +33,27 @@ resources:
       username: ((github.username))
       password: ((github.password))
     icon: github
+  - name: code-analysis
+    type: sonar-runner
+    source:
+      host_url: ((sonarqube.host-url))
+      login: ((sonarqube.auth-token))
+    icon: progress-check
+  - name: simple-flask-app
+    type: registry-image
+    source:
+      repository: kodacme/simple-flask-app
+      username: ((registry.username))
+      password: ((registry.password))
+    icon: docker
+  - name: notify
+    type: slack-alert
+    source:
+      url: ((slack-webhook))
+    icon: chat
 
 jobs:
-  - name: unit
+  - name: test-and-analyze
     plan:
       - get: repo
         trigger: true
@@ -29,8 +61,87 @@ jobs:
       - get: repo-test-report
       - task: unittest
         file: repo-ci/dev-ci/task/unittest.yaml
+        on_failure:
+          put: notify
+          params:
+            alert_type: failed
       - task: report-upload
         file: repo-ci/dev-ci/task/report-upload.yaml
+        on_failure:
+          put: notify
+          params:
+            alert_type: failed
       - put: repo-test-report
         params:
           repository: repo-test-report-update
+        on_failure:
+          put: notify
+          params:
+            alert_type: failed
+      - put: code-analysis
+        params:
+          project_path: sonarqube-analysis-input
+          project_key: concourse-ci-sample
+          project_name: concourse-ci-sample
+          sources: ["main"]
+          tests: ["tests"]
+          additional_properties:
+            sonar.python.xunit.reportPath: test-results/report.xml
+            sonar.python.coverage.reportPath: test-results/coverage.xml
+        on_failure:
+          put: notify
+          params:
+            alert_type: failed
+
+  - name: qualitygate
+    plan:
+      - in_parallel:
+        - get: repo-ci
+          passed:
+            - test-and-analyze
+        - get: code-analysis
+          passed:
+            - test-and-analyze
+          trigger: true
+
+      - task: check-sonarqube-quality-gate
+        file: repo-ci/dev-ci/task/quality-gate.yaml
+        on_failure:
+          put: notify
+          params:
+            alert_type: failed
+            text: "Quality Gate was not passed"
+
+  - name: build-image
+    plan:
+      - get: code-analysis
+        passed:
+          - qualitygate
+        trigger: true
+      - get: repo
+      - get: repo-ci
+      - task: build-image
+        privileged: true
+        file: repo-ci/dev-ci/task/build-image.yaml
+        on_failure:
+          put: notify
+          params:
+            alert_type: failed
+      - put: simple-flask-app
+        params:
+          image: image/image.tar
+          version: "1.0"
+        get_params:
+          skip_download: true
+        on_success:
+          put: notify
+          params:
+            alert_type: success
+        on_failure:
+          put: notify
+          params:
+            alert_type: failed
+
+# There is no sample job beyond this,
+# but we can edit the Kubernetes manifest file,
+# run a deploy job and more.
