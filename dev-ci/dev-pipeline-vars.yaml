@@ -9,3 +9,5 @@ sonarqube:
 registry:
   username: dummy
   password: dummy
+
+slack-webhook: dummy
